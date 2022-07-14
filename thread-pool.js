@@ -106,3 +106,53 @@ Timer 3 finished
 
 
 */
+
+process.env.UV_THREADPOOL_SIZE = 4; // setting threads back to 4
+
+setTimeout(() => console.log("Timer 1 finished"), 0);
+setImmediate(() => console.log("Immediate 1 finished"));
+
+fs.readFile("./test-file.txt", () => {
+  console.log("I/O has finished");
+  console.log("----------------------------------");
+
+  setTimeout(() => console.log("Timer 2 finished"), 0);
+  setTimeout(() => console.log("Timer 3 finished"), 3000);
+  setImmediate(() => console.log("Immediate 2 finished"));
+
+  process.nextTick(() => console.log("Process nextTick "));
+
+  crypto.pbkdf2Sync("passwordStr", "salt", 100000, 1024, "sha512");
+  console.log(Date.now() - start, "Password encrypted");
+
+  crypto.pbkdf2Sync("passwordStr", "salt", 100000, 1024, "sha512");
+  console.log(Date.now() - start, "Password encrypted");
+
+  crypto.pbkdf2Sync("passwordStr", "salt", 100000, 1024, "sha512");
+  console.log(Date.now() - start, "Password encrypted");
+
+  crypto.pbkdf2Sync("passwordStr", "salt", 100000, 1024, "sha512");
+  console.log(Date.now() - start, "Password encrypted");
+});
+
+// Output for above
+
+/*
+
+- Here the encryption is no longer asynchronous hence its does
+  not enter in the event loop so its not offloaded to the thread pool
+  and even worse it blocks execution of even the setTimeout functions
+
+Timer 1 finished
+Immediate 1 finished
+I/O has finished
+----------------------------------
+1595 Password encrypted
+3178 Password encrypted
+4913 Password encrypted
+6505 Password encrypted
+Process nextTick 
+Immediate 2 finished
+Timer 2 finished
+Timer 3 finished
+*/
