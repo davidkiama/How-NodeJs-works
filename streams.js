@@ -23,7 +23,7 @@ server.on("request", (req, res) => {
   no more data will be sent
    */
 
-  const readable = fs.createReadStream("./test-file.txt");
+  const readable = fs.createReadStream("./testt-file.txt");
 
   readable.on("data", (chunk) => {
     res.write(chunk);
@@ -31,6 +31,12 @@ server.on("request", (req, res) => {
 
   readable.on("end", () => {
     res.end();
+  });
+
+  readable.on("error", (err) => {
+    console.log(err);
+    res.statusCode = 500;
+    res.end("File not found");
   });
 });
 
