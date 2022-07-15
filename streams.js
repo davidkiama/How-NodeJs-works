@@ -21,7 +21,12 @@ server.on("request", (req, res) => {
   and wait for the stream to recieve another chunk.
   Once we have no more chunks we end the response indicating that 
   no more data will be sent
-   */
+
+  Problem with this solution is the readable stream is much faster than
+  sending the stream over the network. This will overwhelm the response stream 
+  which can't handle all the incoming data so fast. 
+  THis is called backPressure
+ 
 
   const readable = fs.createReadStream("./testt-file.txt");
 
@@ -38,6 +43,16 @@ server.on("request", (req, res) => {
     res.statusCode = 500;
     res.end("File not found");
   });
+
+    */
+
+  // Solution 3
+  /* The pipe method will handle the speed of data coming in and going out
+     hence solving the backpressure problem 
+     
+  */
+  const readable = fs.createReadStream("./test-file.txt");
+  readable.pipe(res);
 });
 
 server.listen(8000, () => {
