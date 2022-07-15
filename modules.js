@@ -21,3 +21,22 @@ console.log(calc1.add(2, 4)); // 6
 
 const { add, multiply, divide } = require("./test-module-2");
 console.log(divide(10, 2)); // 5
+
+//caching
+require("./test-module-3")();
+require("./test-module-3")();
+require("./test-module-3")();
+
+/*
+//Output from above
+
+Hello from the module
+Log this text
+Log this text
+Log this text
+
+The first log was printed only once indicating that the file was only run once
+The three function calls were fetched from cache
+
+
+*/
